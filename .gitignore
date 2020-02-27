@@ -1,0 +1,7 @@
+node_modules
+big_token_data.csv
+raw_data.db
+rawdata.db
+backend/node_modules
+frontend/node_modules
+rawdata.db-journal
