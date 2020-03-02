@@ -3,5 +3,6 @@ big_token_data.csv
 raw_data.db
 rawdata.db
 backend/node_modules
+backend/rawdata.db
 frontend/node_modules
 rawdata.db-journal
