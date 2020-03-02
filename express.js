@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const hardPrice = require('./hardPrices.json');
 const ss = require('simple-statistics');
+const cors = require('cors');
+
 
 const tokenMap = {
 BNB:"0xb8c77482e45f1f44de1745f52c74426c631bdd52",
@@ -63,18 +65,9 @@ const cal = ss.sampleCorrelation(adjusted.slice(1), volume.slice(1));
 const backend = express();
 
 backend.use(bodyParser.json({ extended: true }));
-
+backend.use(cors());
 backend.get('/check', (req,res) => {
-  
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers',
-        'Cache-Control, Pragma, Origin, '+
-        'Authorization, Content-Type, '+
-        ' X-Requested-With');
-    res.header('Access-Control-Allow-Methods', 'POST, GET');
     res.send("OK");
-    
-   
 });
 
 
@@ -82,26 +75,20 @@ backend.get('/check', (req,res) => {
 backend.post('/getDump', (req,res) => {
   const tokenName = req.body.token;
   const tokenAddress = tokenMap[tokenName];
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers',
-      'Cache-Control, Pragma, Origin, '+
-      'Authorization, Content-Type, '+
-      ' X-Requested-With');
-  res.header('Access-Control-Allow-Methods', 'POST, GET');
-  
+
   if(tokenAddress){
     getToken(tokenAddress).then(
       (result)=>{ 
-        const r = processToken(result, tokenName);
-        res.send(r); 
+        const data = processToken(result, tokenName);
+        res.json(data); 
       
       }
     ).catch(err => {
-      res.send({error: err})
+      res.json({error: err, reason: "token fetch failed"})
     })
   }
   else{
-    res.send({error: "Bad token"})
+    res.json({error: "Bad token"})
   }
   
 
