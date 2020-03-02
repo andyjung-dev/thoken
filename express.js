@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const hardPrice = require('./hardPrices.json');
-const correlation = require('node-correlation');
+const ss = require('simple-statistics');
 
 const tokenMap = {
 BNB:"0xb8c77482e45f1f44de1745f52c74426c631bdd52",
@@ -47,12 +47,13 @@ function processToken(tokenData, tokenName){
   tokenData.forEach(elem => {
     volume[parseInt(elem.day)-1] = elem.volume;
   });
-
-console.log();
+  // Note: this is a very very bad way to do any estimate, we are only doing this here since we know the general price ranges of our tokens
+const adjusted = hardPrice[tokenName].map(x => Math.round(x*10000) );
+const cal = ss.sampleCorrelation(adjusted.slice(1), volume.slice(1));
   return {
     transfers: volume,
     prices: hardPrice[tokenName],
-    coefficient: correlation.calc(hardPrice[tokenName], volume)
+    correlation: cal,
   }
 
 }
