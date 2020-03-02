@@ -11,7 +11,7 @@ BAT:"0x0d8775f648430679a709e98d2b0cb6250d2887ef",
 ZRX:"0xe41d2489571d322189246dafa5ebde1f4699f498",
 DAI:"0x6b175474e89094c44da98b954eedeac495271d0f"}
 
-const port = 80;
+const port = process.env.PORT || 8040;
 
 const db = new sqlite3.Database('rawdata.db', (err) => {
       if (err) {
